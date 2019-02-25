@@ -18,25 +18,31 @@ public class AmazonsBot {
         this.player = player;             
     }
      
-      /*
+    /*
         Creates the board produced by all possible moves the player can perform. Scores up each board with the scoreboard function.
+        Returns the move that produces the best score.
     */    
     Move findMove(){              
         Move bestMove = new Move();
+     
         int bestScore = Integer.MIN_VALUE;
-        char[][] board = player.board.gameBoard;        
+        char[][] board = player.board.gameBoard;   
+        char[][] rsltBoard = new char[board.length][board.length];   
+        
         Point myPiece[] = findPieces(player.myQueenSymb, board);
         Point badPiece[] = findPieces(player.badQueenSymb, board);
         
-        System.out.println("current score: " + scoreBoard(board));
-
-        char[][] rsltBoard = new char[board.length][board.length];        
-        DestList[] myQueen = new DestList[4];
+        DestList[] myQueen = new DestList[4]; //all possible moves players queen can perform
         for(int i = 0; i < myQueen.length; i++) myQueen[i] = new DestList(myPiece[i], board);
         
-        for(int i = 0; i < 4; i++){ //go through all players queens
-            for(int j = 0; j < myQueen[i].numMoves; j++){ //go through all the moves of each queen
-                for(int k = 0; k < 100; k++){ //set up board that would result from queens move
+        System.out.println("current score: " + scoreBoard(board));        
+        
+        //go through all of the players queens
+        for(int i = 0; i < 4; i++){ 
+            //try all of each queens possible moves
+            for(int j = 0; j < myQueen[i].numMoves; j++){ 
+                //set up board that would result from queens move
+                for(int k = 0; k < 100; k++){ 
                     int y = k/10;
                     int x = k%10;
                     rsltBoard[y][x] = board[y][x];
@@ -44,8 +50,9 @@ public class AmazonsBot {
                 rsltBoard[myQueen[i].src.y][myQueen[i].src.x] = BoardGameModel.POS_AVAILABLE;
                 rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = player.myQueenSymb;
                 
+                //try all possible arrow shots for each queen
                 DestList arrowMoves = new DestList(myQueen[i].moves[j], board);
-                for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions
+                for(int k = 0; k < arrowMoves.numMoves; k++){ 
                     rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
                     //score up the board and keep the best move
                     int score = scoreBoard(rsltBoard);
@@ -60,6 +67,10 @@ public class AmazonsBot {
         return bestMove;
     }
     
+    /*
+        Counts up the number of tiles owned by all of the players queens. A tile is owned by the queen closest to it, only empty tiles can be owned. 
+        score = my tiles owned - other player tiles owned.
+    */
     int scoreBoard(char[][] board){
         int myScore = 0;
         int badScore = 0;
@@ -67,12 +78,14 @@ public class AmazonsBot {
         Point myPieces[] = findPieces(player.myQueenSymb, board);
         Point badPieces[] = findPieces(player.badQueenSymb, board);       
         
+        //iterate through each empty tile
         for(int y = 0; y < board.length; y++)
             for(int x = 0; x < board.length; x++){
                 if(board[y][x] != BoardGameModel.POS_AVAILABLE) continue;
                 int myBest = Integer.MAX_VALUE;
                 int badBest = Integer.MAX_VALUE;
                 
+                //find smallest manhattan block distance betweeen each empty tile and each players queens
                 for(int i = 0; i < 4; i++ ){
                     int dist = Math.abs(x-myPieces[i].x) + Math.abs(y-myPieces[i].y);
                     if(dist < myBest) myBest = dist;
@@ -80,21 +93,22 @@ public class AmazonsBot {
                     dist = Math.abs(x-badPieces[i].x) + Math.abs(y-badPieces[i].y);
                     if(dist < badBest) badBest = dist;                    
                 }
+                
                 if(myBest < badBest){
                     myScore++;
                 }
                 else if( badBest < myBest){
                     badScore++;
-                }                
+                }    
+                //else no player gets a point for a tie
             } 
         return myScore - badScore;
     }
     
     
-    
    /*
-    Finds the next move using a min max tree.
-    */ 
+    Uses above methods of evaluating moves but puts each possible move into a node. This allows the bot to look several turns ahead.
+    */
     //TODO: finish
     Move findMoveTree(){        
         Move bestMove = new Move();
@@ -156,10 +170,9 @@ public class AmazonsBot {
                 }                
             }                
         }
-    }     
-        
-
+    }           
     
+    //finds location of a players pieces.
     private Point[] findPieces(char type, char board[][]){
         Point pieces[] = new Point[4];
         int count = 0;
@@ -230,6 +243,10 @@ class Move{
     }
 }
 
+/*
+ A list of all of the possible moves an object can perform. 
+ Can only move horizontaly, verticaly and diagionaly to an unblocked location 
+*/
 class DestList{
     Point src;
     Point moves[];
@@ -258,8 +275,7 @@ class DestList{
                 moves[numMoves] = new Point(x,y);
                 numMoves++;                
             }             
-        }
-        
+        }        
     }
 }
 
