@@ -25,9 +25,10 @@ class AmazonsAI extends Amazons{
     @Override
     void performMove(){ 
         
-        Move move = mybot.findMove();        
+        //Move move = mybot.findMove(); 
+        Move move = mybot.findMoveTree();
         boolean validMove = board.positionMarked(move.qDest.y, move.qDest.x, move.arrow.y, move.arrow.x, move.qSrc.y, move.qSrc.x, false);
-            
+            System.out.println("src:"+move.qSrc.x +","+move.qSrc.y + " qdst:" + move.qDest.x + "," + move.qDest.y + " arr:" + move.arrow.x + "," + move.arrow.y);
         if(validMove){
             super.playerMove(move.qDest.y, move.qDest.x, move.arrow.y, move.arrow.x, move.qSrc.y, move.qSrc.x);
         }
@@ -114,6 +115,7 @@ public class Amazons extends GamePlayer{
             }else{
                 myQueenSymb = BoardGameModel.POS_MARKED_BLACK;
                 badQueenSymb = BoardGameModel.POS_MARKED_WHITE;
+                System.out.println(this.userName() + " is the black player");
             }            
 	}
         

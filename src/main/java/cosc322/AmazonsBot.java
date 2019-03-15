@@ -77,7 +77,7 @@ public class AmazonsBot {
         
         Point myPieces[] = findPieces(player.myQueenSymb, board);
         Point badPieces[] = findPieces(player.badQueenSymb, board);       
-        
+         
         //iterate through each empty tile
         for(int y = 0; y < board.length; y++)
             for(int x = 0; x < board.length; x++){
@@ -118,16 +118,56 @@ public class AmazonsBot {
         System.out.println("current score: " + scoreBoard(board));
         
         Node root = new Node(null, 0, board);
-        expandNode(root);
-       
-        for(Node child : root.children){
-            if(child.score > bestScore){
-                bestScore = child.score;
-                bestMove = child.move;
-            }
+        expandNode(root); 
+        System.out.println(root.children.size());
+        
+        int depth = -1;
+        if(root.children.size() < 100)depth = 4;
+        if(root.children.size() < 200)depth = 3;
+        if(root.children.size() < 400)depth = 2;
+        if(root.children.size() < 600)depth = 1;
+        if(root.children.size() < 800)depth = 0;
+        
+        if(depth >= 0){
+            for( Node child : root.children)
+                expandRecursive(child, depth); 
         }
-
+        
+        for(Node child : root.children){ 
+            int score = minMaxTree(child, true);
+            if( score > bestScore){
+                bestScore = score;
+                bestMove = child.move;
+            }            
+        }
+        System.out.println("done!");
         return bestMove;        
+    }
+    
+    int minMaxTree(Node node, boolean max){
+        if (node.children.size() == 0) return node.score;
+        
+        Node best = node.children.get(0);
+        if(max){
+           for(int i = 1; i < node.children.size(); i++){
+               if(node.children.get(i).score > best.score) best = node.children.get(i);
+           }
+        }
+        else{
+           for(int i = 1; i < node.children.size(); i++){
+               if(node.children.get(i).score > best.score) best = node.children.get(i);
+           }
+        }
+        return node.score + minMaxTree(best, !max);
+    }
+    
+    void expandRecursive(Node root, int depth){    
+        expandNode(root);     
+        
+        if(depth > 0){ //having base case here saves some method calls
+            for( Node child : root.children)
+                expandRecursive(child, depth - 1);
+        }        
     }
     
     //Adds all possible moves to a node of the minmax tree
@@ -149,7 +189,7 @@ public class AmazonsBot {
                 rsltBoard[myQueen[i].src.y][myQueen[i].src.x] = BoardGameModel.POS_AVAILABLE;
                 rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = player.myQueenSymb;
                 
-                DestList arrowMoves = new DestList(myQueen[i].moves[j], node.board);
+                DestList arrowMoves = new DestList(myQueen[i].moves[j], rsltBoard);
                 for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions                    
                     rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
                     //score up the board and keep the best move
