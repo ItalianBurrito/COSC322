@@ -6,6 +6,7 @@
 package cosc322;
 
 import java.util.ArrayList;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -18,54 +19,6 @@ public class AmazonsBot {
         this.player = player;             
     }
      
-    /*
-        Creates the board produced by all possible moves the player can perform. Scores up each board with the scoreboard function.
-        Returns the move that produces the best score.
-    */    
-    Move findMove(){              
-        Move bestMove = new Move();
-     
-        int bestScore = Integer.MIN_VALUE;
-        char[][] board = player.board.gameBoard;   
-        char[][] rsltBoard = new char[board.length][board.length];   
-        
-        Point myPiece[] = findPieces(player.myQueenSymb, board);
-        Point badPiece[] = findPieces(player.badQueenSymb, board);
-        
-        DestList[] myQueen = new DestList[4]; //all possible moves players queen can perform
-        for(int i = 0; i < myQueen.length; i++) myQueen[i] = new DestList(myPiece[i], board);
-        
-        System.out.println("current score: " + scoreBoard(board));        
-        
-        //go through all of the players queens
-        for(int i = 0; i < 4; i++){ 
-            //try all of each queens possible moves
-            for(int j = 0; j < myQueen[i].numMoves; j++){ 
-                //set up board that would result from queens move
-                for(int k = 0; k < 100; k++){ 
-                    int y = k/10;
-                    int x = k%10;
-                    rsltBoard[y][x] = board[y][x];
-                }
-                rsltBoard[myQueen[i].src.y][myQueen[i].src.x] = BoardGameModel.POS_AVAILABLE;
-                rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = player.myQueenSymb;
-                
-                //try all possible arrow shots for each queen
-                DestList arrowMoves = new DestList(myQueen[i].moves[j], board);
-                for(int k = 0; k < arrowMoves.numMoves; k++){ 
-                    rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
-                    //score up the board and keep the best move
-                    int score = scoreBoard(rsltBoard);
-                    if(score > bestScore){
-                        bestScore = score;
-                        bestMove.set(myQueen[i].src, myQueen[i].moves[j], new Point(arrowMoves.moves[k].x, arrowMoves.moves[k].y));
-                    }
-                    rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_AVAILABLE;
-                }                
-            }
-        }
-        return bestMove;
-    }
     
     /*
         Counts up the number of tiles owned by all of the players queens. A tile is owned by the queen closest to it, only empty tiles can be owned. 
@@ -110,28 +63,59 @@ public class AmazonsBot {
     Uses above methods of evaluating moves but puts each possible move into a node. This allows the bot to look several turns ahead.
     */
     //TODO: finish
-    Move findMoveTree(){        
+    Move findMoveTree() {        
         Move bestMove = new Move();
         int bestScore = Integer.MIN_VALUE;
         char[][] board = player.board.gameBoard;  
         
-        System.out.println("current score: " + scoreBoard(board));
+        
+        System.out.println("--Starting Turn--");
+        //System.out.println("current score: " + scoreBoard(board));
         
         Node root = new Node(null, 0, board);
-        expandNode(root); 
+        expandNode(root, player.myQueenSymb); 
         System.out.println(root.children.size());
         
         int depth = -1;
-        if(root.children.size() < 100)depth = 4;
-        if(root.children.size() < 200)depth = 3;
-        if(root.children.size() < 400)depth = 2;
-        if(root.children.size() < 600)depth = 1;
-        if(root.children.size() < 800)depth = 0;
+        if (root.children.size() < 1500) depth = 0;
+        if (root.children.size() < 130) depth = 1;
+         if (root.children.size() < 50) depth = 2;
+
         
-        if(depth >= 0){
-            for( Node child : root.children)
-                expandRecursive(child, depth); 
+        
+        int numThreads = 4;
+        if(numThreads > 1){
+            BuildTreeThread[] t = new BuildTreeThread[numThreads-1];
+            int size = root.children.size() / numThreads;        
+
+            for(int i = 0; i < t.length; i++) {           
+                t[i] = new BuildTreeThread(this, root.children, i*size, i*size+(size-1), depth);
+                //System.out.println("start:" + i*size + " end:" + (i*size+(size-1)));
+            }        
+
+            for(int i = 0; i < t.length; i++) t[i].start();            
+            
+            //System.out.println("start:" + t.length*size + " end:" + root.children.size());
+            if(depth >= 0){                
+                for(int i = t.length*size; i < root.children.size(); i++)
+                    expandRecursive(root.children.get(i), depth, false); 
+            }
+
+            //wait for threads to finish
+            try {
+                for(int i = 0; i < t.length; i++) t[i].join();
+           } catch (InterruptedException ex) {
+               Exceptions.printStackTrace(ex);
+           }          
         }
+        else{
+            if(depth >= 0){
+                for( Node child : root.children)
+                    expandRecursive(child, depth, false); 
+            }   
+        }
+        
+        System.out.println("searching tree!");
         
         for(Node child : root.children){ 
             int score = minMaxTree(child, true);
@@ -139,8 +123,7 @@ public class AmazonsBot {
                 bestScore = score;
                 bestMove = child.move;
             }            
-        }
-        System.out.println("done!");
+        }        
         return bestMove;        
     }
     
@@ -161,20 +144,21 @@ public class AmazonsBot {
         return node.score + minMaxTree(best, !max);
     }
     
-    void expandRecursive(Node root, int depth){    
-        expandNode(root);     
+    void expandRecursive(Node node, int depth, boolean myTurn){    
+        if (myTurn) expandNode(node, player.myQueenSymb);
+        else expandNode(node, player.badQueenSymb); 
         
         if(depth > 0){ //having base case here saves some method calls
-            for( Node child : root.children)
-                expandRecursive(child, depth - 1);
+            for( Node child : node.children)
+                expandRecursive(child, depth - 1, !myTurn);
         }        
     }
     
     //Adds all possible moves to a node of the minmax tree
-    void expandNode(Node node){
+    void expandNode(Node node, char playerSymbol){
         
-        Point myPiece[] = findPieces(player.myQueenSymb, node.board);
-        Point badPiece[] = findPieces(player.badQueenSymb, node.board);        
+        Point myPiece[] = findPieces(playerSymbol, node.board);
+        //Point badPiece[] = findPieces(player.badQueenSymb, node.board);        
                 
         DestList[] myQueen = new DestList[4];
         for(int i = 0; i < myQueen.length; i++) myQueen[i] = new DestList(myPiece[i], node.board);        
@@ -187,7 +171,7 @@ public class AmazonsBot {
                     rsltBoard[y][x] = node.board[y][x];
                 }
                 rsltBoard[myQueen[i].src.y][myQueen[i].src.x] = BoardGameModel.POS_AVAILABLE;
-                rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = player.myQueenSymb;
+                rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = playerSymbol;
                 
                 DestList arrowMoves = new DestList(myQueen[i].moves[j], rsltBoard);
                 for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions                    
@@ -317,6 +301,35 @@ class DestList{
             }             
         }        
     }
+}
+
+class BuildTreeThread extends Thread{
+    
+    ArrayList<Node> nodes;
+    int start;
+    int end;
+    int depth;      
+    char myQueenSymb;
+    char badQueenSymb;
+    AmazonsBot bot;
+    
+
+    public BuildTreeThread(AmazonsBot bot, ArrayList<Node> nodes, int start, int end, int depth){
+        this.nodes = nodes;
+        this.start = start;
+        this.end = end;
+        this.depth = depth;
+        this.bot = bot;
+       }
+    
+    @Override
+    public void run() {
+        if(depth >= 0){
+            for(int i = start; i < end; i++){
+                bot.expandRecursive(nodes.get(i), depth, false); 
+            }
+        }
+    }    
 }
 
 
