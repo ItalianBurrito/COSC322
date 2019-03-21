@@ -65,7 +65,7 @@ public class COSC322Test extends GamePlayer{
 	    + "the gameClient instance created in my constructor knows how!");
         
         ArrayList<String> rooms = this.gameClient.getRoomList();        
-        this.gameClient.joinRoom(rooms.get(0));
+        this.gameClient.joinRoom(rooms.get(15));
         
         
         

@@ -6,6 +6,7 @@
 package cosc322;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.openide.util.Exceptions;
 
 /**
@@ -14,9 +15,16 @@ import org.openide.util.Exceptions;
  */
 public class AmazonsBot {
     Amazons player;    
+    Node root;
+    Node current;
    
     public AmazonsBot(Amazons player){
-        this.player = player;             
+        this.player = player;     
+        //AmazonsGUI gui = new AmazonsGUI(player.userName(), player.toString());
+    }
+    
+    void setBoard(String board){
+        
     }
      
     
@@ -72,14 +80,15 @@ public class AmazonsBot {
         System.out.println("--Starting Turn--");
         //System.out.println("current score: " + scoreBoard(board));
         
-        Node root = new Node(null, 0, board);
+        //Node root = new Node(null, 0, board);
+        root = new Node(board);
         expandNode(root, player.myQueenSymb); 
         System.out.println(root.children.size());
         
         int depth = -1;
         if (root.children.size() < 1500) depth = 0;
         if (root.children.size() < 130) depth = 1;
-         if (root.children.size() < 50) depth = 2;
+         if (root.children.size() < 50) depth = 1;
 
         
         
@@ -93,7 +102,9 @@ public class AmazonsBot {
                 //System.out.println("start:" + i*size + " end:" + (i*size+(size-1)));
             }        
 
-            for(int i = 0; i < t.length; i++) t[i].start();            
+            for (BuildTreeThread t1 : t) {            
+                t1.start();
+            }
             
             //System.out.println("start:" + t.length*size + " end:" + root.children.size());
             if(depth >= 0){                
@@ -123,8 +134,9 @@ public class AmazonsBot {
                 bestScore = score;
                 bestMove = child.move;
             }            
-        }        
-        return bestMove;        
+        }      
+        root = null;
+        return bestMove;   
     }
     
     int minMaxTree(Node node, boolean max){
@@ -163,8 +175,10 @@ public class AmazonsBot {
         DestList[] myQueen = new DestList[4];
         for(int i = 0; i < myQueen.length; i++) myQueen[i] = new DestList(myPiece[i], node.board);        
         for(int i = 0; i < 4; i++){ //go through all players queens
+            //System.out.println("Queen: " + i );
             char[][] rsltBoard = new char[node.board.length][node.board.length];
             for(int j = 0; j < myQueen[i].numMoves; j++){ //go through all the moves of each queen
+                //System.out.println("Num moves: " + j );
                 for(int k = 0; k < 100; k++){ //set up board that would result from queens move
                     int y = k/10;
                     int x = k%10;
@@ -174,7 +188,8 @@ public class AmazonsBot {
                 rsltBoard[myQueen[i].moves[j].y ][myQueen[i].moves[j].x] = playerSymbol;
                 
                 DestList arrowMoves = new DestList(myQueen[i].moves[j], rsltBoard);
-                for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions                    
+                for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions    
+                    //System.out.println("Arrow: " + k );
                     rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
                     //score up the board and keep the best move
                     int score = scoreBoard(rsltBoard);                  
@@ -187,6 +202,7 @@ public class AmazonsBot {
                     }                    
                     
                     Node child = new Node(node, score, nodeBoard);
+                    //Node child = new Node(node, score);
                    
                     child.move.set(myQueen[i].src, myQueen[i].moves[j], new Point(arrowMoves.moves[k].x, arrowMoves.moves[k].y));
                     node.children.add(child);
@@ -198,7 +214,19 @@ public class AmazonsBot {
     
     //finds location of a players pieces.
     private Point[] findPieces(char type, char board[][]){
+        //char[][] temp = board;
         Point pieces[] = new Point[4];
+//        ArrayList<Move> moveSet = new ArrayList<>(); 
+//        
+//        do{
+//            if(node.move == null){
+//                break;
+//            }else{
+//                moveSet.add(node.getMove());
+//                node = node.getParent();
+//            }
+//        }while(node.hasLast());
+        
         int count = 0;
         for(int y = 0; y < board.length; y++)
             for(int x = 0; x < board.length; x++){
@@ -227,7 +255,37 @@ class Node{
         children = new ArrayList<>();
         move = new Move();
     }
+    
+    public Node(Node parent, int score){
+        this.score = score;
+        this.parent = parent;
+        children = new ArrayList<>();
+        move = new Move();
+    }
+    
+    public Node(char[][] board){
+        this.board = board;
+        this.parent = null;
+        children = new ArrayList<>();
+    }
+    
+    boolean hasLast(){
+        if(this.parent != null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    Move getMove(){
+        return this.move;
+    }
+    
+    Node getParent(){
+        return this.parent;
+    }
 }
+
 
 class Point{
     int x;
