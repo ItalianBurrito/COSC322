@@ -95,9 +95,11 @@ public class AmazonsBot {
         }
         
         int depth = 2;
-        if (children.size() < 450) depth = 3;
-        if (children.size() < 100) depth = 4;
-        if (children.size() < 50) depth = 5;
+
+        if (children.size() < 450) depth = 2;
+        if (children.size() < 300) depth = 3;
+        if (children.size() < 90) depth = 4;
+
         //if (root.children.size() < 130) depth = 3;
         //if (root.children.size() < 50) depth = 4;
 
