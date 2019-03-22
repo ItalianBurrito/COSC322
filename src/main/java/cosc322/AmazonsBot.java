@@ -119,16 +119,17 @@ public class AmazonsBot {
         ArrayList<Node> children = expandNode(root, player.myQueenSymb); 
         System.out.println("Our Children " + children.size());
         
+        int thereSize = 0;
         if(children.size() > 0){
-            int thereSize = expandNode(children.get(0), player.badQueenSymb).size();
+            thereSize = expandNode(children.get(0), player.badQueenSymb).size();
             System.out.println("thereChildren: " + thereSize);
         }
         
         int depth = 2;
-        if (children.size() + thereSize < 750) depth = 3;
-        if (children.size() + thereSize < 180) depth = 4;
-        if (children.size() + thereSize < 100) depth = 5;
-        if (children.size() + thereSize < 60) depth = 6;
+//        if (children.size() + thereSize < 640) depth = 3;
+//        if (children.size() + thereSize < 180) depth = 4;
+//        if (children.size() + thereSize < 100) depth = 5;
+//        if (children.size() + thereSize < 60) depth = 6;
         
         
         int numThreads = 7;
