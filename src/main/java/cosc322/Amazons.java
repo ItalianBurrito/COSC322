@@ -1,10 +1,11 @@
 package cosc322;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import javax.swing.Box;
+import javax.swing.JFrame;
 
 import ygraphs.ai.smart_fox.GameMessage;
 import ygraphs.ai.smart_fox.games.AmazonsGameMessage;
@@ -13,8 +14,7 @@ import ygraphs.ai.smart_fox.games.GamePlayer;
 
 
 class AmazonsAI extends Amazons{
-    AmazonsBot mybot;
-    
+    AmazonsBot mybot;    
     
     public AmazonsAI(String name, String passwd) {
         super(name, passwd);
@@ -25,14 +25,22 @@ class AmazonsAI extends Amazons{
     @Override
     void performMove(){ 
         
-        //Move move = mybot.findMove(); 
+        long startTime = System.nanoTime();
         Move move = mybot.findMoveTree();
+        long elapsed = (System.nanoTime() - startTime)/1000000000;
+         System.out.println("done turn!");
+        System.out.println("Elapsed:" + elapsed + " sec\n");
+       
+        
+        
         boolean validMove = board.positionMarked(move.qDest.y, move.qDest.x, move.arrow.y, move.arrow.x, move.qSrc.y, move.qSrc.x, false);
-            System.out.println("src:"+move.qSrc.x +","+move.qSrc.y + " qdst:" + move.qDest.x + "," + move.qDest.y + " arr:" + move.arrow.x + "," + move.arrow.y);
+            //System.out.println("src:"+move.qSrc.x +","+move.qSrc.y + " qdst:" + move.qDest.x + "," + move.qDest.y + " arr:" + move.arrow.x + "," + move.arrow.y);
         if(validMove){
             super.playerMove(move.qDest.y, move.qDest.x, move.arrow.y, move.arrow.x, move.qSrc.y, move.qSrc.x);
         }
         else System.out.println("Invalid move " + move.qSrc.x + ", " + move.qSrc.y + " | " + move.qDest.x + ", " + move.qDest.y + " | " + move.arrow.x + ", " + move.arrow.y);
+        
+        super.performMove();
     }
     
 }
@@ -54,6 +62,9 @@ public class Amazons extends GamePlayer{
     private GameClient gameClient;            
     
     private boolean gameStarted = false;     
+    
+    private JFrame guiFrame;
+    private BoardPanel boardPanel;
             
     /**
      * Constructor
@@ -64,7 +75,26 @@ public class Amazons extends GamePlayer{
        this.usrName = name;    	   
         
        board = new BoardGameModel(10, 10);                     
-       connectToServer(name, passwd);        
+       connectToServer(name, passwd); 
+
+        guiFrame = new JFrame();
+
+        guiFrame.setSize(800, 600);
+        guiFrame.setTitle("Game of the Amazons (COSC 322, )" + this.userName());
+
+        Container contentPane = guiFrame.getContentPane();
+        contentPane.setLayout(new  BorderLayout());
+
+        contentPane.add(Box.createVerticalGlue()); 
+
+        boardPanel = new BoardPanel(this);		
+        contentPane.add(boardPanel,  BorderLayout.CENTER);
+
+        guiFrame.setLocation(200, 200);
+        guiFrame.setVisible(true);
+        guiFrame.repaint();		
+        guiFrame.setLayout(null);
+       
     }
 	
     private void connectToServer(String name, String passwd){
@@ -82,7 +112,7 @@ public class Amazons extends GamePlayer{
 
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
-	this.gameClient.joinRoom(rooms.get(0));	 		
+	this.gameClient.joinRoom(rooms.get(13));	 		
     }
     
     
@@ -137,7 +167,7 @@ public class Amazons extends GamePlayer{
     }
     
     void performMove(){
-        
+        boardPanel.drawBoard(); 
     }
 	
 	
@@ -189,33 +219,12 @@ public class Amazons extends GamePlayer{
 	return usrName;
     }
 	
-    class MyTimer extends TimerTask{
-	GameClient gameClient = null;
-	int[] qf;
-	int[] qn;
-	int[] ar;
-	
-	public MyTimer(GameClient gameClient, int[] qf, int[] qn, int[] ar){	
-	    this.gameClient = gameClient;
-	    this.qf = qf;
-	    this.qn = qn;
-	    this.ar = ar;
-	}
-		
-	/**
-	 * send the move 
-	 */
-	public void run() {
-		gameClient.sendMoveMessage(qf, qn, ar);
-	}
-    }
-    
     /**
      * Constructor 
      * @param args
      */
     public static void main(String[] args) { 
-	AmazonsGUI game01 = new AmazonsGUI("player-01", "01");
+	Amazons game01 = new Amazons("player-01", "01");
 	//Amazons game02 = new Amazons("player-02", "02");
         AmazonsAI game02 = new AmazonsAI("player-02", "02");
         
