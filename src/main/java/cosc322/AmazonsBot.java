@@ -125,12 +125,10 @@ public class AmazonsBot {
         }
         
         int depth = 2;
-        //if (children.size() < 450) depth = 3;
-        //if (children.size() < 100) depth = 4;
-        //if (children.size() < 50) depth = 5;
-        //if (root.children.size() < 130) depth = 3;
-        //if (root.children.size() < 50) depth = 4;
-
+        if (children.size() + thereSize < 750) depth = 3;
+        if (children.size() + thereSize < 180) depth = 4;
+        if (children.size() + thereSize < 100) depth = 5;
+        if (children.size() + thereSize < 60) depth = 6;
         
         
         int numThreads = 7;
@@ -719,5 +717,3 @@ class BoardPanel extends JPanel{
         }			 
      }//end of GameEventHandler	
 }//end of GameBoard  
-
-

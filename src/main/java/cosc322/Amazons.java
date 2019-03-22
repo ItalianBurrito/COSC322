@@ -112,7 +112,13 @@ public class Amazons extends GamePlayer{
 
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
+<<<<<<< HEAD
 	this.gameClient.joinRoom(rooms.get(3));	 		
+=======
+
+	this.gameClient.joinRoom(rooms.get(3));	 	
+
+>>>>>>> 237a91a26e2c6ad2a0a4b4e7f78f398568d6c129
     }
     
     
@@ -127,7 +133,7 @@ public class Amazons extends GamePlayer{
      */
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails){
 		
-//       System.out.println("-- Server Message for " + this.userName() + " --");
+       System.out.println("-- Server Message for " + this.userName() + " --");
 //       System.out.println(messageType);        
 //       Iterator iterator = msgDetails.entrySet().iterator();
 //       while (iterator.hasNext()){
@@ -163,7 +169,7 @@ public class Amazons extends GamePlayer{
 	ArrayList<Integer> arrow = (ArrayList<Integer>) msgDetails.get(AmazonsGameMessage.ARROW_POS);
 
         board.positionMarked(qnew.get(0)-1, qnew.get(1)-1, arrow.get(0)-1, arrow.get(1)-1, qcurr.get(0)-1, qcurr.get(1)-1, true);
-        
+        //System.out.println(board.toString());
         performMove();
     }
     
@@ -224,11 +230,20 @@ public class Amazons extends GamePlayer{
      * Constructor 
      * @param args
      */
+<<<<<<< HEAD
     public static void main(String[] args) { 
 	//Amazons game01 = new Amazons("player-01", "01");
 	//Amazons game02 = new Amazons("player-02", "02");
         AmazonsAI game01 = new AmazonsAI("blarrgg", "02");
         AmazonsAI game02 = new AmazonsAI("Arrgggg", "02");
+=======
+    public static void main(String[] args) { 	
+      
+        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
+
+	//Amazons game02 = new Amazons("player-02", "02");
+        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
+>>>>>>> 237a91a26e2c6ad2a0a4b4e7f78f398568d6c129
         
 	//Amazons game = new Amazons(args[0], args[1]);		
     }
