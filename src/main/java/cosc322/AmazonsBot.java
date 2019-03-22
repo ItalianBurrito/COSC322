@@ -66,10 +66,10 @@ public class AmazonsBot {
                 }
                 
                 if(myBest < badBest){
-                    myScore++;
+                    myScore += 1;
                 }
                 else if( badBest < myBest){
-                    badScore++;
+                    badScore +=1;
                 }    
                 //else no player gets a point for a tie
             } 
@@ -77,7 +77,7 @@ public class AmazonsBot {
     }
     
     boolean noMoves(char[][] board, char playerSymbol){
-        Point myPieces[] = findPieces(player.myQueenSymb, board);
+        Point myPieces[] = findPieces(playerSymbol, board);
         
         boolean validDir[] = new  boolean[8]; //clockwise up to left-up
         int dir[][] = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
@@ -119,13 +119,15 @@ public class AmazonsBot {
         ArrayList<Node> children = expandNode(root, player.myQueenSymb); 
         System.out.println("Our Children " + children.size());
         
+        int thereSize = children.size();
         if(children.size() > 0){
-            int thereSize = expandNode(children.get(0), player.badQueenSymb).size();
+            thereSize += expandNode(children.get(0), player.badQueenSymb).size();
             System.out.println("thereChildren: " + thereSize);
         }
         
         int depth = 2;
-        if (children.size() + thereSize < 750) depth = 3;
+        
+        if (children.size() + thereSize < 640) depth = 3;
         if (children.size() + thereSize < 180) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
         if (children.size() + thereSize < 60) depth = 6;
@@ -200,7 +202,11 @@ public class AmazonsBot {
             
             
             char playerSymbol = player.myQueenSymb;
-            if(!node.maxNode) playerSymbol = player.badQueenSymb;
+            char badSymbol = player.badQueenSymb;
+            if(!node.maxNode) {
+                playerSymbol = player.badQueenSymb;
+                badSymbol = player.myQueenSymb;
+            }
             
             Move move = node.iterator.getNextMove(playerSymbol, node.board);
             if(move == null){
@@ -223,7 +229,36 @@ public class AmazonsBot {
                 rsltBoard[move.qSrc.y][move.qSrc.x] = BoardGameModel.POS_AVAILABLE;
                 rsltBoard[move.qDest.y][move.qDest.x] = playerSymbol;
                 rsltBoard[move.arrow.y][move.arrow.x] = BoardGameModel.POS_MARKED_ARROW;
-
+                
+                /*
+                if(node.maxNode){
+                    if(noMoves(rsltBoard, badSymbol)){
+                        node.score = Integer.MAX_VALUE -1;
+                        continue;
+                    }
+                }else{
+                    if(noMoves(rsltBoard, playerSymbol)){
+                        node.score = Integer.MIN_VALUE -1;
+                        continue;
+                    }
+                }
+                */
+                
+                
+                /*
+                if(noMoves(rsltBoard, badSymbol)){
+                    if(node.maxNode) node.score = Integer.MAX_VALUE -1;
+                    else node.score = Integer.MIN_VALUE -1;
+                    continue;
+                }                
+                else if(noMoves(rsltBoard, playerSymbol)){
+                    if(node.maxNode) node.score = Integer.MIN_VALUE -1;
+                    else node.score = Integer.MAX_VALUE -1;
+                    continue;
+                }
+                */
+                
+                
                 if(node.depth+1 == maxDepth){
                     int childScore = scoreBoard(rsltBoard);
                     if(node.maxNode)
@@ -303,7 +338,7 @@ public class AmazonsBot {
                         nodeBoard[y][x] = rsltBoard[y][x];
                     }       
 
-                    Node child = new Node(node, nodeBoard, 1, true);
+                    Node child = new Node(node, nodeBoard, 1, false);
                     child.score = score;
                     child.move.set(myQueen[i].src, myQueen[i].moves[j], new Point(arrowMoves.moves[k].x, arrowMoves.moves[k].y));
                     output.add(child);
