@@ -113,7 +113,7 @@ public class Amazons extends GamePlayer{
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
 
-	this.gameClient.joinRoom(rooms.get(3));	 	
+	this.gameClient.joinRoom(rooms.get(3));	 		
 
     }
     
@@ -226,9 +226,10 @@ public class Amazons extends GamePlayer{
      * Constructor 
      * @param args
      */
+
     public static void main(String[] args) { 	
       
-        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
+        AmazonsAI game01 = new AmazonsAI("blarg", "01");
 
 	//Amazons game02 = new Amazons("player-02", "02");
         //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
