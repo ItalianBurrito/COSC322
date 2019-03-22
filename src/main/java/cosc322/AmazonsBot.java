@@ -43,6 +43,11 @@ public class AmazonsBot {
         
         Point myPieces[] = findPieces(player.myQueenSymb, board);
         Point badPieces[] = findPieces(player.badQueenSymb, board);       
+        
+        for(int i = 0; i < myPieces.length; i++){
+            myScore += new DestList(myPieces[i], board).moves.length;
+            badScore += new DestList(badPieces[i], board).moves.length;
+        }
          
         //iterate through each empty tile
         for(int y = 0; y < board.length; y++)
@@ -71,6 +76,31 @@ public class AmazonsBot {
         return myScore - badScore;
     }
     
+    boolean noMoves(char[][] board, char playerSymbol){
+        Point myPieces[] = findPieces(player.myQueenSymb, board);
+        
+        boolean validDir[] = new  boolean[8]; //clockwise up to left-up
+        int dir[][] = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
+        for(int i = 0; i < 8; i++) validDir[i] = true;
+        
+        for(int i = 0; i < myPieces.length; i++){
+            for(int j = 0; j < 8; j++){
+                int x = myPieces[i].x + 1*dir[j][0];
+                int y = myPieces[i].y + 1*dir[j][1];
+                
+                if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
+                    validDir[j] = false;
+                }              
+            }             
+        }
+        
+        for(int i = 0; i < validDir.length; i++){
+            if(validDir[i] == true) return true;
+        }
+        return false;
+    }
+
+    
     
    /*
     Uses above methods of evaluating moves but puts each possible move into a node. This allows the bot to look several turns ahead.
@@ -95,9 +125,9 @@ public class AmazonsBot {
         }
         
         int depth = 2;
-        if (children.size() < 450) depth = 3;
-        if (children.size() < 100) depth = 4;
-        if (children.size() < 50) depth = 5;
+        //if (children.size() < 450) depth = 3;
+        //if (children.size() < 100) depth = 4;
+        //if (children.size() < 50) depth = 5;
         //if (root.children.size() < 130) depth = 3;
         //if (root.children.size() < 50) depth = 4;
 
@@ -168,9 +198,9 @@ public class AmazonsBot {
         
         while(stack.size() > 0){
             Node node = stack.get(stack.size() - 1);
-            stack.remove(stack.size() - 1);
+            stack.remove(stack.size() - 1);            
             
-
+            
             char playerSymbol = player.myQueenSymb;
             if(!node.maxNode) playerSymbol = player.badQueenSymb;
             
@@ -265,7 +295,7 @@ public class AmazonsBot {
                 for(int k = 0; k < arrowMoves.numMoves; k++){ //try all the possible arrow positions                    
                     rsltBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
                     //score up the board and keep the best move
-                    int score = scoreBoard(rsltBoard);                  
+                    int score = scoreBoard(rsltBoard);                     
                     
                     char[][] nodeBoard = new char[node.board.length][node.board.length];
 
