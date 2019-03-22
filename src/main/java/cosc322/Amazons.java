@@ -112,7 +112,7 @@ public class Amazons extends GamePlayer{
 
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
-	this.gameClient.joinRoom(rooms.get(13));	 		
+	this.gameClient.joinRoom(rooms.get(3));	 		
     }
     
     
@@ -146,6 +146,7 @@ public class Amazons extends GamePlayer{
                 myQueenSymb = BoardGameModel.POS_MARKED_BLACK;
                 badQueenSymb = BoardGameModel.POS_MARKED_WHITE;
                 System.out.println(this.userName() + " is the black player");
+                performMove();
             }            
 	}
         
@@ -224,9 +225,10 @@ public class Amazons extends GamePlayer{
      * @param args
      */
     public static void main(String[] args) { 
-	Amazons game01 = new Amazons("player-01", "01");
+	//Amazons game01 = new Amazons("player-01", "01");
 	//Amazons game02 = new Amazons("player-02", "02");
-        AmazonsAI game02 = new AmazonsAI("player-02", "02");
+        AmazonsAI game01 = new AmazonsAI("blarrgg", "02");
+        AmazonsAI game02 = new AmazonsAI("Arrgggg", "02");
         
 	//Amazons game = new Amazons(args[0], args[1]);		
     }
