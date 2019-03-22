@@ -229,10 +229,10 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) { 	
       
-        AmazonsAI game01 = new AmazonsAI("blarg", "01");
+        AmazonsAI game01 = new AmazonsAI("Xena", "01");
 
 	//Amazons game02 = new Amazons("player-02", "02");
-        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
+        AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
         
 	//Amazons game = new Amazons(args[0], args[1]);		
     }
