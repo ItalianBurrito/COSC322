@@ -112,7 +112,9 @@ public class Amazons extends GamePlayer{
 
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
-	this.gameClient.joinRoom(rooms.get(13));	 		
+
+	this.gameClient.joinRoom(rooms.get(3));	 	
+
     }
     
     
@@ -127,7 +129,7 @@ public class Amazons extends GamePlayer{
      */
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails){
 		
-//       System.out.println("-- Server Message for " + this.userName() + " --");
+       System.out.println("-- Server Message for " + this.userName() + " --");
 //       System.out.println(messageType);        
 //       Iterator iterator = msgDetails.entrySet().iterator();
 //       while (iterator.hasNext()){
@@ -146,6 +148,7 @@ public class Amazons extends GamePlayer{
                 myQueenSymb = BoardGameModel.POS_MARKED_BLACK;
                 badQueenSymb = BoardGameModel.POS_MARKED_WHITE;
                 System.out.println(this.userName() + " is the black player");
+                performMove();
             }            
 	}
         
@@ -162,7 +165,7 @@ public class Amazons extends GamePlayer{
 	ArrayList<Integer> arrow = (ArrayList<Integer>) msgDetails.get(AmazonsGameMessage.ARROW_POS);
 
         board.positionMarked(qnew.get(0)-1, qnew.get(1)-1, arrow.get(0)-1, arrow.get(1)-1, qcurr.get(0)-1, qcurr.get(1)-1, true);
-        
+        //System.out.println(board.toString());
         performMove();
     }
     
@@ -223,10 +226,12 @@ public class Amazons extends GamePlayer{
      * Constructor 
      * @param args
      */
-    public static void main(String[] args) { 
-	Amazons game01 = new Amazons("player-01", "01");
+    public static void main(String[] args) { 	
+      
+        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
+
 	//Amazons game02 = new Amazons("player-02", "02");
-        AmazonsAI game02 = new AmazonsAI("player-02", "02");
+        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
         
 	//Amazons game = new Amazons(args[0], args[1]);		
     }
