@@ -5,17 +5,17 @@
  */
 package cosc322;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+//import java.awt.BorderLayout;
+//import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.Box;
-import javax.swing.JFrame;
+//import java.util.Arrays;
+//import javax.swing.Box;
+//import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.openide.util.Exceptions;
@@ -41,9 +41,11 @@ public class AmazonsBot {
         int myScore = 0;
         int badScore = 0;
         
+        //Finds our queens and opponent queens.
         Point myPieces[] = findPieces(player.myQueenSymb, board);
         Point badPieces[] = findPieces(player.badQueenSymb, board);       
         
+        //Makes 
         for(int i = 0; i < myPieces.length; i++){
             myScore += new DestList(myPieces[i], board).moves.length;
             badScore += new DestList(badPieces[i], board).moves.length;
@@ -83,14 +85,13 @@ public class AmazonsBot {
         int dir[][] = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
         for(int i = 0; i < 8; i++) validDir[i] = true;
         
-        for(int i = 0; i < myPieces.length; i++){
-            for(int j = 0; j < 8; j++){
-                int x = myPieces[i].x + 1*dir[j][0];
-                int y = myPieces[i].y + 1*dir[j][1];
-                
+        for (Point myPiece : myPieces) {
+            for (int j = 0; j < 8; j++) {
+                int x = myPiece.x + 1*dir[j][0];
+                int y = myPiece.y + 1*dir[j][1];
                 if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
                     validDir[j] = false;
-                }              
+                }
             }             
         }
         
@@ -151,7 +152,9 @@ public class AmazonsBot {
                 //System.out.println("start:" + i*size + " end:" + (i*size+(size-1)));
             }        
 
-            for(int i = 0; i < t.length; i++) t[i].start();            
+            for (BuildTreeThread t1 : t) {            
+                t1.start();
+            }
             
             //System.out.println("start:" + t.length*size + " end:" + root.children.size());
             if(depth > 1){  
@@ -163,7 +166,9 @@ public class AmazonsBot {
 
             //wait for threads to finish
             try {
-                for(int i = 0; i < t.length; i++) t[i].join();
+                for (BuildTreeThread t1 : t) {
+                    t1.join();
+                }
            } catch (InterruptedException ex) {
                Exceptions.printStackTrace(ex);
            }          
@@ -186,14 +191,14 @@ public class AmazonsBot {
         return bestMove;        
     }
 
-    public void minmaxScoreNode(int maxDepth, ArrayList<Node> children){
+    void minmaxScoreNode(int maxDepth, ArrayList<Node> children){
         
         
         ArrayList<Node> stack = new ArrayList<>();
         
-        for(Node node : children){
+        children.forEach((node) -> {
             stack.add(node);
-        }
+        });
         
         while(stack.size() > 0){
             Node node = stack.get(stack.size() - 1);
@@ -349,7 +354,7 @@ public class AmazonsBot {
     }           
     
     //finds location of a players pieces.
-    public  static Point[] findPieces(char type, char board[][]){
+    static Point[] findPieces(char type, char board[][]){
         Point pieces[] = new Point[4];
         int count = 0;
         for(int y = 0; y < board.length; y++)
@@ -435,7 +440,7 @@ class Move{
 }
 
 class MoveIterator{
-    final static int dirList[][] = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
+    final static int[][] DIRLIST = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
     
     int qNum;
     int qdir;
@@ -457,7 +462,7 @@ class MoveIterator{
     public Move getNextMove(char playerSymbol, char board[][]){
         
         Point myPiece[] = AmazonsBot.findPieces(playerSymbol, board);
-        Point aDest = null;
+        Point aDest;
         
         Point qPos = getQueenDest(myPiece[qNum], board);
         while(qPos == null){
@@ -501,8 +506,8 @@ class MoveIterator{
         Point dest = null;        
         while(dest == null){
             
-            int x = src.x + qdist*dirList[qdir][0];
-            int y = src.y + qdist*dirList[qdir][1];
+            int x = src.x + qdist*DIRLIST[qdir][0];
+            int y = src.y + qdist*DIRLIST[qdir][1];
         
             if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
                 qdir++;
@@ -520,8 +525,8 @@ class MoveIterator{
         
         Point dest = null;        
         while(dest == null){
-            int x = src.x + adist*dirList[adir][0];
-            int y = src.y + adist*dirList[adir][1];
+            int x = src.x + adist*DIRLIST[adir][0];
+            int y = src.y + adist*DIRLIST[adir][1];
         
             if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
                 adir++;
@@ -600,8 +605,8 @@ class BuildTreeThread extends Thread{
 
 class BoardPanel extends JPanel{
     private static final long serialVersionUID = 1L;
-    private  int rows = 10;
-    private  int cols = 10; 
+    private final int rows = 10;
+    private final int cols = 10; 
 
     int width = 500;
     int height = 500;
@@ -616,7 +621,7 @@ class BoardPanel extends JPanel{
     
     Amazons player = null; 
     private BoardGameModel gameModel = null;
-    private JLabel actionLabel;
+    private final JLabel actionLabel;
    
 
     boolean playerAMove;
@@ -638,6 +643,7 @@ class BoardPanel extends JPanel{
     }
 
         // JCmoponent method
+    @Override
     protected void paintComponent(Graphics gg){        	
             super.paintComponent(gg);
             Graphics g = (Graphics2D) gg;   
@@ -647,34 +653,39 @@ class BoardPanel extends JPanel{
                     g.drawLine(offset, i*cellDim + offset, cols * cellDim + offset, i*cellDim + offset);					 
             }
 
-            for(int r = 0; r < rows; r++){
-              for(int c = 0; c < cols; c++){
+            for(int j = 0; j < rows; j++){
+              for(int k = 0; k < cols; k++){
 
-                            posX = c * cellDim + offset;
-                            posY = r * cellDim + offset;
+                            posX = k * cellDim + offset;
+                            posY = j * cellDim + offset;
 
-                            posY = (9 - r) * cellDim + offset;
+                            posY = (9 - j) * cellDim + offset;
 
-                    if(gameModel.gameBoard[r][c] == BoardGameModel.POS_AVAILABLE){
+                    if(gameModel.gameBoard[j][k] == BoardGameModel.POS_AVAILABLE){
                             g.clearRect(posX+1, posY+1, 49, 49);					
                     }
 
-                    if(gameModel.gameBoard[r][c] == BoardGameModel.POS_MARKED_BLACK){
-                            g.fillOval(posX, posY, 50, 50);
-                    } 
-                    else if(gameModel.gameBoard[r][c] == BoardGameModel.POS_MARKED_ARROW) {
-                            g.clearRect(posX+1, posY+1, 49, 49);
-                            g.drawLine(posX, posY, posX + 50, posY + 50);
-                            g.drawLine(posX, posY + 50, posX + 50, posY);
-                    }
-                    else if(gameModel.gameBoard[r][c] == BoardGameModel.POS_MARKED_WHITE){
-                            g.drawOval(posX, posY, 50, 50);
-                    }
+                  switch (gameModel.gameBoard[j][k]) {
+                      case BoardGameModel.POS_MARKED_BLACK:
+                          g.fillOval(posX, posY, 50, 50);
+                          break;
+                      case BoardGameModel.POS_MARKED_ARROW:
+                          g.clearRect(posX+1, posY+1, 49, 49);
+                          g.drawLine(posX, posY, posX + 50, posY + 50);
+                          g.drawLine(posX, posY + 50, posX + 50, posY);
+                          break;
+                      case BoardGameModel.POS_MARKED_WHITE:
+                          g.drawOval(posX, posY, 50, 50);
+                          break;
+                      default:
+                          break;
+                  }
               }
         }   
     }//method
 
     //JComponent method
+    @Override
     public Dimension getPreferredSize() {
             return new Dimension(500,500);
      }
@@ -696,6 +707,7 @@ class BoardPanel extends JPanel{
         int arow = 0;
         int acol = 0; 
 
+        @Override
     public void mousePressed(MouseEvent e) {
 
             int x = e.getX();
@@ -709,28 +721,29 @@ class BoardPanel extends JPanel{
             int row = (y - offset) / cellDim;                        
             int col = (x - offset) / cellDim;            
 
-            if(counter == 0){
-                actionLabel.setText("Action: Move Queen");
-                qfr = row;
-                qfc = col;
-
-                qfr = 9 - qfr;
-                counter++;
-            }
-            else if(counter ==1){
-                actionLabel.setText("Action: Shoot Arrow");
-                qrow = row;
-                qcol = col;
-
-                qrow = 9 - qrow;
-                counter++;
-            }
-            else if (counter == 2){
-                arow = row;
-                acol = col;
-
-                arow = 9 - arow;
-                counter++;
+            switch (counter) {
+                case 0:
+                    actionLabel.setText("Action: Move Queen");
+                    qfr = row;
+                    qfc = col;
+                    qfr = 9 - qfr;
+                    counter++;
+                    break;
+                case 1:
+                    actionLabel.setText("Action: Shoot Arrow");
+                    qrow = row;
+                    qcol = col;
+                    qrow = 9 - qrow;
+                    counter++;
+                    break;
+                case 2:
+                    arow = row;
+                    acol = col;
+                    arow = 9 - arow;
+                    counter++;
+                    break;
+                default:
+                    break;
             }
 
             if(counter == 3){
