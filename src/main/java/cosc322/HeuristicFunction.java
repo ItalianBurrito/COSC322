@@ -6,12 +6,15 @@
 package cosc322;
 
 import static cosc322.AmazonsBot.findPieces;
+import java.util.ArrayList;
 
 /**
  *
  * @author james
  */
 public class HeuristicFunction {
+    
+    final static int[][] DIRLIST = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
     
     public static int calcHeuristic(char[][] board, Amazons player){
     
@@ -30,11 +33,12 @@ public class HeuristicFunction {
         Point myPieces[] = findPieces(player.myQueenSymb, board);
         Point badPieces[] = findPieces(player.badQueenSymb, board);       
         
-        //Makes 
+
         for(int i = 0; i < myPieces.length; i++){
-            myScore += new DestList(myPieces[i], board).moves.length;
-            badScore += new DestList(badPieces[i], board).moves.length;
+            myScore += new DestList(myPieces[i], board).numMoves;
+            badScore += new DestList(badPieces[i], board).numMoves;
         }
+
          
         //iterate through each empty tile
         for(int y = 0; y < board.length; y++)
@@ -62,5 +66,37 @@ public class HeuristicFunction {
             } 
         return myScore - badScore;
     }
+    
+    int findZoneSize(char[][] board, Amazons player){
+        Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
+        Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
+        
+        int score = 0;
+        for(int i = 0; i < myPieces.length; i++){
+            //Point p = 
+        }
+        
+        
+        return 0;
+    }
+    
+    int findTiles(Point src, char[][] board, boolean[][] searched, ArrayList<Point> stack){
+            int num = 0;
+            for(int j = 0; j < 8; j++){
+                int x = src.x + 1*DIRLIST[j][0];
+                int y = src.y + 1*DIRLIST[j][1];
+                
+                if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE || searched[y][x] == true) {
+                    continue;
+                }
+                
+                searched[y][x] = true;
+                num++;
+                stack.add(new Point(x,y));       
+            }                  
+        return num;
+    }
+        
+         
     
 }

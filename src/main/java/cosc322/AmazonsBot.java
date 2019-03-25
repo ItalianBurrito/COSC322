@@ -71,7 +71,7 @@ public class AmazonsBot {
         
         
         System.out.println("--Starting Turn--");
-        //System.out.println("current score: " + scoreBoard(board));
+        System.out.println("current score: " + HeuristicFunction.calcHeuristic(board, player));
         
         Node root = new Node(null, board, 0, true);
         ArrayList<Node> children = expandNode(root, player.myQueenSymb); 
@@ -84,7 +84,7 @@ public class AmazonsBot {
         }
         
         int depth = 2;
-
+        
         if (children.size() + thereSize < 500) depth = 3;
         if (children.size() + thereSize < 180) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
