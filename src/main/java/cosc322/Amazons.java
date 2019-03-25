@@ -24,6 +24,7 @@ class AmazonsAI extends Amazons{
     
     @Override
     void performMove(){ 
+        super.performMove();
         
         long startTime = System.nanoTime();
         Move move = mybot.findMoveTree();
