@@ -119,7 +119,7 @@ public class AmazonsBot {
         ArrayList<Node> children = expandNode(root, player.myQueenSymb); 
         System.out.println("Our Children " + children.size());
         
-        int thereSize = children.size();
+        int thereSize = 0;
         if(children.size() > 0){
             thereSize += expandNode(children.get(0), player.badQueenSymb).size();
             System.out.println("thereChildren: " + thereSize);
@@ -127,7 +127,7 @@ public class AmazonsBot {
         
         int depth = 2;
         
-        if (children.size() + thereSize < 640) depth = 3;
+        if (children.size() + thereSize < 490) depth = 3;
         if (children.size() + thereSize < 180) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
         if (children.size() + thereSize < 60) depth = 6;
@@ -281,7 +281,7 @@ public class AmazonsBot {
                     
                     if(prune == true){
                         stack.add(node);
-                        System.out.println("prunned");
+                        //System.out.println("prunned");
                     }
                     else{
                         Node child = new Node(node, rsltBoard, node.depth+1, !node.maxNode);
