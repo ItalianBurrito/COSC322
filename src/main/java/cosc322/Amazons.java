@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.Box;
 import javax.swing.JFrame;
-
+//import java.util.Iterator;
 import ygraphs.ai.smart_fox.GameMessage;
 import ygraphs.ai.smart_fox.games.AmazonsGameMessage;
 import ygraphs.ai.smart_fox.games.GameClient;
@@ -130,7 +130,7 @@ public class Amazons extends GamePlayer{
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails){
 		
        System.out.println("-- Server Message for " + this.userName() + " --");
-//       System.out.println(messageType);        
+       System.out.println(messageType);        
 //       Iterator iterator = msgDetails.entrySet().iterator();
 //       while (iterator.hasNext()){
 //           Map.Entry pair = (Map.Entry)iterator.next();
@@ -165,7 +165,7 @@ public class Amazons extends GamePlayer{
 	ArrayList<Integer> arrow = (ArrayList<Integer>) msgDetails.get(AmazonsGameMessage.ARROW_POS);
 
         board.positionMarked(qnew.get(0)-1, qnew.get(1)-1, arrow.get(0)-1, arrow.get(1)-1, qcurr.get(0)-1, qcurr.get(1)-1, true);
-        System.out.println(board.toString());
+        //System.out.println(board.toString());
         performMove();
     }
     
@@ -229,9 +229,9 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) { 	
       
-        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
+        AmazonsAI game01 = new AmazonsAI("Xenox", args[1]);
 	//Amazons game02 = new Amazons("player-02", "02");
-        AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
+        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
         
 	//Amazons game = new Amazons(args[0], args[1]);		
     }

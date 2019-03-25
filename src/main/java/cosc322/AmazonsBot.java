@@ -47,8 +47,9 @@ public class AmazonsBot {
         
         //Makes 
         for(int i = 0; i < myPieces.length; i++){
-            myScore += new DestList(myPieces[i], board).moves.length;
-            badScore += new DestList(badPieces[i], board).moves.length;
+            myScore += new DestList(myPieces[i], board).numMoves;
+            //System.out.println(myScore);
+            badScore += new DestList(badPieces[i], board).numMoves;
         }
          
         //iterate through each empty tile
@@ -114,7 +115,7 @@ public class AmazonsBot {
         
         
         System.out.println("--Starting Turn--");
-        //System.out.println("current score: " + scoreBoard(board));
+        System.out.println("current score: " + scoreBoard(board));
         
         Node root = new Node(null, board, 0, true);
         ArrayList<Node> children = expandNode(root, player.myQueenSymb); 
@@ -128,12 +129,12 @@ public class AmazonsBot {
         
         int depth = 2;
 
-        if (children.size() + thereSize < 500) depth = 3;
-        if (children.size() + thereSize < 180) depth = 4;
-        if (children.size() + thereSize < 100) depth = 5;
-        if (children.size() + thereSize < 60) depth = 6;
+        if (children.size() + thereSize < 600) depth = 3;
+        if (children.size() + thereSize < 215) depth = 4;
+        if (children.size() + thereSize < 100) depth = 6;
+        if (children.size() + thereSize < 60) depth = 8;
         
-        int numThreads = 7;
+        int numThreads = 12;
         if(numThreads > 1){
             BuildTreeThread[] t = new BuildTreeThread[numThreads-1];
             int size = children.size() / numThreads;   
@@ -199,10 +200,13 @@ public class AmazonsBot {
         children.forEach((node) -> {
             stack.add(node);
         });
-        
+
         while(stack.size() > 0){
-            Node node = stack.get(stack.size() - 1);
-            stack.remove(stack.size() - 1);            
+        
+        
+            //Node node = stack.get(stack.size() - 1);
+            Node node = stack.remove(stack.size() - 1);   
+            
             
             
             char playerSymbol = player.myQueenSymb;
@@ -221,7 +225,8 @@ public class AmazonsBot {
                 else{
                     node.score = Math.min(node.parent.score, node.score);
                 }   
-                stack.add(node.parent);                
+                stack.add(node.parent);
+                //children.add(node.parent);
             }
             else{
                 char[][] rsltBoard = new char[node.board.length][node.board.length];
@@ -271,6 +276,7 @@ public class AmazonsBot {
                         node.score = Math.min(childScore, node.score);
                     }   
                     stack.add(node);
+                    //children.add(node);
                 }
                 else{                    
                     boolean prune = false;
@@ -285,11 +291,13 @@ public class AmazonsBot {
                     
                     if(prune == true){
                         stack.add(node);
+                        //children.add(node);
                         //System.out.println("prunned");
                     }
                     else{
                         Node child = new Node(node, rsltBoard, node.depth+1, !node.maxNode);
                         stack.add(child); 
+                        //children.add(child);
                     }
                 }
                             /*
@@ -306,7 +314,7 @@ public class AmazonsBot {
    
              
             }       
-        }                
+        }            
     }    
     
     //Adds all possible moves to a node of the minmax tree
