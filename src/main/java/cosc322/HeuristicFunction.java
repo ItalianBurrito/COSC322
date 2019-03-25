@@ -71,16 +71,18 @@ public class HeuristicFunction {
         Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
         Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
         
+        
+        boolean[][] searched = new boolean[10][10];
         int score = 0;
         for(int i = 0; i < myPieces.length; i++){
-            //Point p = 
+            score += findTiles(myPieces[i], board, searched);
         }
         
         
-        return 0;
+        return score;
     }
     
-    int findTiles(Point src, char[][] board, boolean[][] searched, ArrayList<Point> stack){
+    int findTiles(Point src, char[][] board, boolean[][] searched){
             int num = 0;
             for(int j = 0; j < 8; j++){
                 int x = src.x + 1*DIRLIST[j][0];
@@ -92,7 +94,9 @@ public class HeuristicFunction {
                 
                 searched[y][x] = true;
                 num++;
-                stack.add(new Point(x,y));       
+                
+                num += findTiles(new Point(x,y), board, searched);
+               // stack.add(new Point(x,y));       
             }                  
         return num;
     }
