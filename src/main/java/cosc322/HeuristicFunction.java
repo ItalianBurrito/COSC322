@@ -6,7 +6,7 @@
 package cosc322;
 
 import static cosc322.AmazonsBot.findPieces;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 
 /**
  *
@@ -69,13 +69,13 @@ public class HeuristicFunction {
     
     int findZoneSize(char[][] board, Amazons player){
         Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
-        Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
+        //Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
         
         
         boolean[][] searched = new boolean[10][10];
         int score = 0;
-        for(int i = 0; i < myPieces.length; i++){
-            score += findTiles(myPieces[i], board, searched);
+        for (Point myPiece : myPieces) {
+            score += findTiles(myPiece, board, searched);
         }
         
         

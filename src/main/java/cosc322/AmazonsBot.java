@@ -225,7 +225,8 @@ public class AmazonsBot {
 
 
                 if(node.depth+1 == maxDepth){
-                    int childScore = HeuristicFunction.calcHeuristic(rsltBoard, player);
+                    int childScore;
+                    childScore = HeuristicFunction.calcHeuristic(rsltBoard, player);
                     if(node.maxNode)
                         node.score = Math.max(childScore, node.score);
                     else{
@@ -236,17 +237,17 @@ public class AmazonsBot {
                 }
                 else{
                     boolean prune = false;
-                    if(node.parent != null){
-                        if(node.parent.maxNode){
-                            if(node.parent.score > node.score && node.parent.score != Integer.MIN_VALUE && node.score != Integer.MAX_VALUE) prune = true;
-                        }
-                        else{
-                            if(node.parent.score < node.score && node.parent.score != Integer.MAX_VALUE && node.score != Integer.MIN_VALUE) prune = true;
-                        }
-                    }
+//                    if(node.parent != null){
+//                        if(node.parent.maxNode){
+//                            if(node.parent.score > node.score && node.parent.score != Integer.MIN_VALUE && node.score != Integer.MAX_VALUE) prune = true;
+//                        }
+//                        else{
+//                            if(node.parent.score < node.score && node.parent.score != Integer.MAX_VALUE && node.score != Integer.MIN_VALUE) prune = true;
+//                        }
+//                    }
 
                     if(prune == true){
-                        stack.add(node);
+                        stack.add(node.parent);
                         //children.add(node);
                         //System.out.println("prunned");
                     }
