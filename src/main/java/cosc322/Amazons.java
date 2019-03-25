@@ -113,8 +113,6 @@ public class Amazons extends GamePlayer{
 	//once logged in, the gameClient will have  the names of available game rooms  
 	ArrayList<String> rooms = gameClient.getRoomList();
 
-        String room = "0";
-        //this.gameClient.joinRoom(room);	
 	this.gameClient.joinRoom(rooms.get(8));	 		
 
     }
@@ -167,7 +165,7 @@ public class Amazons extends GamePlayer{
 	ArrayList<Integer> arrow = (ArrayList<Integer>) msgDetails.get(AmazonsGameMessage.ARROW_POS);
 
         board.positionMarked(qnew.get(0)-1, qnew.get(1)-1, arrow.get(0)-1, arrow.get(1)-1, qcurr.get(0)-1, qcurr.get(1)-1, true);
-        //System.out.println(board.toString());
+        System.out.println(board.toString());
         performMove();
     }
     
@@ -231,6 +229,7 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) { 	
       
+
         AmazonsAI game01 = new AmazonsAI("Xena", "01");
         AmazonsAI game02 = new AmazonsAI("bot2", "01");
 
