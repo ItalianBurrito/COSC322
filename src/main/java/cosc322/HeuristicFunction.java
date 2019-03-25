@@ -96,7 +96,7 @@ public class HeuristicFunction {
                 num++;
                 
                 num += findTiles(new Point(x,y), board, searched);
-               // stack.add(new Point(x,y));       
+
             }                  
         return num;
     }
