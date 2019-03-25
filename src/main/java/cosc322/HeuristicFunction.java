@@ -80,7 +80,7 @@ public class HeuristicFunction {
         return 0;
     }
     
-    int findTiles(Point src, char[][] board, boolean[][] searched, ArrayList<Point> stack){
+    int findTiles(Point src, char[][] board, boolean[][] searched){
             int num = 0;
             for(int j = 0; j < 8; j++){
                 int x = src.x + 1*DIRLIST[j][0];
@@ -92,7 +92,8 @@ public class HeuristicFunction {
                 
                 searched[y][x] = true;
                 num++;
-                stack.add(new Point(x,y));       
+                
+                num += findTiles(new Point(x,y), board, searched);
             }                  
         return num;
     }
