@@ -127,7 +127,7 @@ public class AmazonsBot {
         
         int depth = 2;
 
-        if (children.size() + thereSize < 640) depth = 3;
+        if (children.size() + thereSize < 500) depth = 3;
         if (children.size() + thereSize < 180) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
         if (children.size() + thereSize < 60) depth = 6;
@@ -229,19 +229,19 @@ public class AmazonsBot {
                 rsltBoard[move.qDest.y][move.qDest.x] = playerSymbol;
                 rsltBoard[move.arrow.y][move.arrow.x] = BoardGameModel.POS_MARKED_ARROW;
                 
-                /*
-                if(node.maxNode){
-                    if(noMoves(rsltBoard, badSymbol)){
-                        node.score = Integer.MAX_VALUE -1;
-                        continue;
-                    }
-                }else{
-                    if(noMoves(rsltBoard, playerSymbol)){
-                        node.score = Integer.MIN_VALUE -1;
-                        continue;
-                    }
-                }
-                */
+                
+//                if(node.maxNode){
+//                    if(noMoves(rsltBoard, badSymbol)){
+//                        node.score = Integer.MIN_VALUE -1;
+//                        continue;
+//                    }
+//                }else{
+//                    if(noMoves(rsltBoard, playerSymbol)){
+//                        node.score = Integer.MAX_VALUE -1;
+//                        continue;
+//                    }
+//                }
+                
                 
                 
                 /*
@@ -280,7 +280,7 @@ public class AmazonsBot {
                     
                     if(prune == true){
                         stack.add(node);
-                        System.out.println("prunned");
+                        //System.out.println("prunned");
                     }
                     else{
                         Node child = new Node(node, rsltBoard, node.depth+1, !node.maxNode);
