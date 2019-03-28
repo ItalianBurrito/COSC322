@@ -35,11 +35,17 @@ public class BoardGameModel extends GameModel {
 
         gameBoard[0][3] = tagW;
         gameBoard[0][6] = tagW;
+        
         gameBoard[2][0] = tagW;
         gameBoard[2][9] = tagW;
+//        gameBoard[3][0] = tagW;
+//        gameBoard[3][9] = tagW;
 
+//        gameBoard[6][0] = tagB;
+//        gameBoard[6][9] = tagB;
         gameBoard[7][0] = tagB;
         gameBoard[7][9] = tagB;
+
         gameBoard[9][3] = tagB;
         gameBoard[9][6] = tagB;
     }

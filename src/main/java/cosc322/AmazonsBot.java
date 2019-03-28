@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+//import java.util.List;
 //import java.util.Arrays;
 //import javax.swing.Box;
 //import javax.swing.JFrame;
@@ -26,6 +27,7 @@ import org.openide.util.Exceptions;
  */
 public class AmazonsBot {
     Amazons player;
+    long star;
 
     public AmazonsBot(Amazons player){
         this.player = player;
@@ -64,7 +66,8 @@ public class AmazonsBot {
     Uses above methods of evaluating moves but puts each possible move into a node. This allows the bot to look several turns ahead.
     */
     //TODO: finish
-    Move findMoveTree() {
+    Move findMoveTree(Long start) {
+        star = start;
         Move bestMove = new Move();
         int bestScore = Integer.MIN_VALUE;
         char[][] board = player.board.gameBoard;
@@ -118,6 +121,7 @@ public class AmazonsBot {
                 workList[workList.length-1] = new ArrayList<>();
                 for(int i = t.length*size; i < children.size(); i++)
                     workList[workList.length-1].add(children.get(i));
+                             
                 minmaxScoreNode(depth, workList[workList.length-1]);
             }
 
@@ -135,6 +139,8 @@ public class AmazonsBot {
                 minmaxScoreNode(depth, children);
             }
         }
+        
+        
 
         System.out.println("searching tree!");
 
@@ -144,13 +150,13 @@ public class AmazonsBot {
                 bestMove = child.move;
             }
         }
-
+        
         return bestMove;
     }
 
     void minmaxScoreNode(int maxDepth, ArrayList<Node> children){
 
-
+        
         ArrayList<Node> stack = new ArrayList<>();
 
         children.forEach((node) -> {
@@ -272,6 +278,7 @@ public class AmazonsBot {
 
             }
         }
+             
     }
 
     //Adds all possible moves to a node of the minmax tree

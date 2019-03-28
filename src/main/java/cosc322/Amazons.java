@@ -27,8 +27,13 @@ class AmazonsAI extends Amazons{
         super.performMove();
 
         long startTime = System.nanoTime();
-        Move move = mybot.findMoveTree();
+        Move move = mybot.findMoveTree(startTime);
         long elapsed = (System.nanoTime() - startTime)/1000000000;
+        
+        if(elapsed < 25){
+            
+        }
+        
          System.out.println("done turn!");
         System.out.println("Elapsed:" + elapsed + " sec\n");
 
@@ -230,7 +235,7 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) {
 
-        AmazonsAI game01 = new AmazonsAI("Xenox", args[1]);
+        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
 	//Amazons game02 = new Amazons("player-02", "02");
         //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
 
