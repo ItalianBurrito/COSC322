@@ -6,7 +6,6 @@
 package cosc322;
 
 import static cosc322.AmazonsBot.findPieces;
-import java.util.ArrayList;
 
 /**
  *
@@ -17,8 +16,18 @@ public class HeuristicFunction {
     final static int[][] DIRLIST = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
     
     public static int calcHeuristic(char[][] board, Amazons player){
+        
+        int score = scoreBoard(board, player);
+        /*
+        if(!hasMoves(board, player.myQueenSymb)){
+            score = Integer.MIN_VALUE + 1;
+        }
+        else if(!hasMoves(board, player.myQueenSymb)){
+            score = Integer.MAX_VALUE - 1;
+        }
+        */
     
-    return scoreBoard(board, player);
+        return score;
     }
     
         /*
@@ -67,7 +76,7 @@ public class HeuristicFunction {
         return myScore - badScore;
     }
     
-    int findZoneSize(char[][] board, Amazons player){
+    static int findZoneSize(char[][] board, Amazons player){
         Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
         Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
         
@@ -76,13 +85,14 @@ public class HeuristicFunction {
         int score = 0;
         for(int i = 0; i < myPieces.length; i++){
             score += findTiles(myPieces[i], board, searched);
+            score -= findTiles(badPieces[i], board, searched);
         }
         
         
         return score;
     }
     
-    int findTiles(Point src, char[][] board, boolean[][] searched){
+    static int findTiles(Point src, char[][] board, boolean[][] searched){
             int num = 0;
             for(int j = 0; j < 8; j++){
                 int x = src.x + 1*DIRLIST[j][0];
@@ -99,6 +109,30 @@ public class HeuristicFunction {
 
             }                  
         return num;
+    }
+    
+        static boolean hasMoves(char[][] board, char playerSymbol){
+        Point myPieces[] = findPieces(playerSymbol, board);         
+        
+        //go through all the pieces, return true if we find at least one move
+        for (int p = 0; p < myPieces.length; p++) {
+            Point myPiece = myPieces[p];
+            boolean validDir[] = new  boolean[8]; //clockwise up to left-up
+            for(int i = 0; i < 8; i++) validDir[i] = true;
+            
+            //try all the directions of the piece
+            for (int j = 0; j < 8; j++) {
+                int x = myPiece.x + 1*DIRLIST[j][0];
+                int y = myPiece.y + 1*DIRLIST[j][1];
+                if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
+                    validDir[j] = false;
+                }
+            }//end for all possible directions
+            for(int i = 0; i < validDir.length; i++){
+                if(validDir[i] == true) return true;//we have at least one move
+            }
+        }
+        return false;
     }
         
          
