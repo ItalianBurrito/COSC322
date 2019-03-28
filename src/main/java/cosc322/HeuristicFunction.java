@@ -78,7 +78,7 @@ public class HeuristicFunction {
 
     static int findZoneSize(char[][] board, Amazons player){
         Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
-        //Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
+        Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
 
 
         boolean[][] searched = new boolean[10][10];
