@@ -29,11 +29,11 @@ class AmazonsAI extends Amazons{
         long startTime = System.nanoTime();
         Move move = mybot.findMoveTree(startTime);
         long elapsed = (System.nanoTime() - startTime)/1000000000;
-        
+
         if(elapsed < 25){
-            
+
         }
-        
+
          System.out.println("done turn!");
         System.out.println("Elapsed:" + elapsed + " sec\n");
 

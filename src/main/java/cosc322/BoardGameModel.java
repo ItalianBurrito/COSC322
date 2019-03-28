@@ -19,6 +19,18 @@ public class BoardGameModel extends GameModel {
     public static final char POS_MARKED_WHITE = 'w';
     public static final char POS_MARKED_ARROW = 'x';
     public static final char POS_AVAILABLE = '0';
+    
+    public static String boardAsString(char[][] board){
+        String b = "";
+
+        for(int i = 0; i < 10; i++){
+                for(int j = 0; j< 10; j++){
+                  b = b + board[i][j] + " ";
+                }
+                b = b + "\n";
+        }  	  
+        return b;
+    }	
 
     char[][] gameBoard = null; 	
 
