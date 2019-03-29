@@ -13,7 +13,7 @@ import ygraphs.ai.smart_fox.games.GameClient;
 import ygraphs.ai.smart_fox.games.GamePlayer;
 
 class AmazonSettings{
-    final static int ROOM_NUM = 15;
+    final static int ROOM_NUM = 16;
 }
 
 
