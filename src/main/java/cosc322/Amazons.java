@@ -232,7 +232,7 @@ public class Amazons extends GamePlayer{
 
         AmazonsAI game01 = new AmazonsAI("blarg", args[1]);
 
-        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
+        //sAmazonsAI game02 = new AmazonsAI("LanaKane", "02");
 
 	//Amazons game = new Amazons(args[0], args[1]);
     }

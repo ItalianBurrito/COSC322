@@ -20,7 +20,7 @@ public class BoardGameModel extends GameModel {
     public static final char POS_MARKED_ARROW = 'x';
     public static final char POS_AVAILABLE = '0';
     
-    public static String boardAsString(char[][] board){
+    public static void printBoard(char[][] board){
         String b = "";
 
         for(int i = 0; i < 10; i++){
@@ -29,7 +29,7 @@ public class BoardGameModel extends GameModel {
                 }
                 b = b + "\n";
         }  	  
-        return b;
+        System.out.println(b);
     }	
 
     char[][] gameBoard = null; 	
