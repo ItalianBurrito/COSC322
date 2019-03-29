@@ -52,6 +52,7 @@ public class AmazonsBot {
         Node root = new Node(null, board, 0, true);
         ArrayList<Node> children = expandNode(root, player.myQueenSymb);
 
+
         /*
         if(children.size() < 5){
             for(Node child : children){
@@ -68,14 +69,22 @@ public class AmazonsBot {
             System.out.println("thereChildren: " + thereSize);
         }
 
-        System.out.println(BoardGameModel.boardAsString(children.get(0).board) );
+        int depth = 2;
 
-        int depth = 1;
-
+        /*
         if (children.size() + thereSize < 500) depth = 3;
-        if (children.size() + thereSize < 180) depth = 4;
+        if (children.size() + thereSize < 130) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
         if (children.size() + thereSize < 60) depth = 6;
+        */
+
+        if (children.size() + thereSize < 400) depth = 3;
+        if (children.size() + thereSize < 130) depth = 4;
+        if (children.size() + thereSize < 60) depth = 5;
+        if (children.size() + thereSize < 20) depth = 6;
+
+
+        //HeuristicFunction.useZones = false;
 
         int numThreads = 7;
         if(numThreads > 1){
@@ -87,22 +96,23 @@ public class AmazonsBot {
             for(int i = 0; i < t.length; i++) {
                 workList[i] = new ArrayList<>();
 
-                for(int j = i*size; j < i*size+(size-1); j++){
+                for(int j = i*size; j < i*size+size; j++){
                     workList[i].add(children.get(j));
                 }
 
 
                 t[i] = new BuildTreeThread(this, workList[i], depth);
-                //System.out.println("start:" + i*size + " end:" + (i*size+(size-1)));
+                //System.out.println("start:" + i*size + " end:" + (i*size+size));
             }
 
             for (BuildTreeThread t1 : t) {
                 t1.start();
             }
 
-            //System.out.println("start:" + t.length*size + " end:" + root.children.size());
+            //System.out.println("start:" + t.length*size + " end:" + children.size());
             if(depth > 1){
                 workList[workList.length-1] = new ArrayList<>();
+                //System.out.println("start:" + t.length*size + " end:" + children.size());
                 for(int i = t.length*size; i < children.size(); i++)
                     workList[workList.length-1].add(children.get(i));
 
@@ -128,12 +138,15 @@ public class AmazonsBot {
 
         System.out.println("searching tree!");
 
+        System.out.println("final size:" + children.size());
+
         for(Node child : children){
             if(child.score > bestScore){
                 bestScore = child.score;
                 bestMove = child.move;
             }
         }
+        System.out.println("Best Score:" + bestScore);
 
         return bestMove;
     }
@@ -168,7 +181,7 @@ public class AmazonsBot {
                 if(node.parent.maxNode)
                     node.parent.score = Math.max(node.parent.score, node.score);
                 else{
-                    node.score = Math.min(node.parent.score, node.score);
+                    node.parent.score = Math.min(node.parent.score, node.score);
                 }
                 stack.add(node.parent);
             }
@@ -183,6 +196,11 @@ public class AmazonsBot {
                 rsltBoard[move.qDest.y][move.qDest.x] = playerSymbol;
                 rsltBoard[move.arrow.y][move.arrow.x] = BoardGameModel.POS_MARKED_ARROW;
 
+
+                //System.out.println(BoardGameModel.boardAsString(node.board) );
+                //System.out.println(BoardGameModel.boardAsString(rsltBoard) );
+                //System.out.println("------------");
+
                 //use the child's score to find this nodes score
                 int childScore = HeuristicFunction.calcHeuristic(rsltBoard, player);
 
@@ -193,6 +211,7 @@ public class AmazonsBot {
                     else{
                         node.score = Math.min(childScore, node.score);
                     }
+
                     //add this node to the stack, which discards the child
                     stack.add(node);
                 }
@@ -254,7 +273,6 @@ public class AmazonsBot {
                         nodeBoard[y][x] = rsltBoard[y][x];
                     }
                     nodeBoard[arrowMoves.moves[k].y][arrowMoves.moves[k].x] = BoardGameModel.POS_MARKED_ARROW;
-
                     Node child = new Node(node, nodeBoard, 1, false);
                     child.move.set(myQueensMoves.src, myQueensMoves.moves[j], new Point(arrowMoves.moves[k].x, arrowMoves.moves[k].y));
 
@@ -392,15 +410,11 @@ class MoveIterator{
                     if(qNum>=4) return null;
                 }
             }
-            aDest = getNextArrowDest(qPos, board);
+            aDest = getNextArrowDest(qPos, board, myPiece[qNum]);
             if(aDest == null){
                 qPos = null;
             }
         }
-
-
-
-
         return new Move(myPiece[qNum], qPos, aDest);
     }
 
@@ -430,7 +444,7 @@ class MoveIterator{
         return dest;
     }
 
-    public Point getNextArrowDest(Point src, char board[][]){
+    public Point getNextArrowDest(Point src, char board[][], Point origin){
 
         Point dest = null;
         while(dest == null){
@@ -438,7 +452,7 @@ class MoveIterator{
             int y = src.y + adist*DIRLIST[adir][1];
             adist++;
 
-            if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE) {
+            if(x < 0 || x >= board.length || y < 0 || y >= board.length || (board[y][x] != BoardGameModel.POS_AVAILABLE && !(y == origin.y && x == origin.x))) {
                 adir++;
                 adist = 1;
                 if(adir >= 8) {// no more moves

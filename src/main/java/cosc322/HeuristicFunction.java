@@ -15,9 +15,21 @@ public class HeuristicFunction {
 
     final static int[][] DIRLIST = { {0,1}, {1,1}, {1,0}, {1,-1}, {0,-1}, {-1,-1}, {-1,0}, {-1, 1} };
 
+    static boolean useZones = false;
+
     public static int calcHeuristic(char[][] board, Amazons player){
 
-        int score = scoreBoard(board, player);
+        int score = 0;
+
+        score = findZoneSize(board, player);
+        if(score == 0) score = scoreBoard(board, player);
+        /*
+        if(!useZones)
+            score = scoreBoard(board, player);
+        else
+            score = findZoneSize(board, player);
+          */
+
         /*
         if(!hasMoves(board, player.myQueenSymb)){
             score = Integer.MIN_VALUE + 1;
@@ -80,38 +92,56 @@ public class HeuristicFunction {
         Point[] myPieces = AmazonsBot.findPieces(player.myQueenSymb, board);
         Point[] badPieces = AmazonsBot.findPieces(player.badQueenSymb, board);
 
-
         boolean[][] searched = new boolean[10][10];
+
         int score = 0;
+        int[] badNum = new int[1];
         for(int i = 0; i < myPieces.length; i++){
-            score += findTiles(myPieces[i], board, searched);
-            score -= findTiles(badPieces[i], board, searched);
+            if(!searched[myPieces[i].y][myPieces[i].x]) continue;
+
+            badNum[0] = 0;
+            int myScore = findTiles(myPieces[i], board, searched, player.badQueenSymb, badNum);
+            if(badNum[0] > 0) myScore = myScore/badNum[0];
+            score += myScore;
         }
 
+        searched = new boolean[10][10];
+        for(int i = 0; i < badPieces.length; i++){
+            if(!searched[badPieces[i].y][badPieces[i].x]) continue;
+
+            badNum[0] = 0;
+            int myScore = findTiles(badPieces[i], board, searched, player.myQueenSymb,badNum);
+            if(badNum[0] > 0) myScore = myScore/badNum[0];
+            score -= myScore;
+        }
 
         return score;
     }
 
-    static int findTiles(Point src, char[][] board, boolean[][] searched){
+    static int findTiles(Point src, char[][] board, boolean[][] searched, char badSymb, int[] badFound){
             int num = 0;
             for(int j = 0; j < 8; j++){
                 int x = src.x + 1*DIRLIST[j][0];
                 int y = src.y + 1*DIRLIST[j][1];
 
-                if(x < 0 || x >= board.length || y < 0 || y >= board.length || board[y][x] != BoardGameModel.POS_AVAILABLE || searched[y][x] == true) {
+                if(x < 0 || x >= board.length || y < 0 || y >= board.length) continue;
+                if(searched[y][x] == true) continue;
+
+                if(board[y][x] != BoardGameModel.POS_AVAILABLE) {
+                    if(board[y][x] == badSymb) badFound[0]++;
                     continue;
                 }
 
                 searched[y][x] = true;
                 num++;
 
-                num += findTiles(new Point(x,y), board, searched);
+                num += findTiles(new Point(x,y), board, searched, badSymb, badFound);
 
             }
         return num;
     }
 
-        static boolean hasMoves(char[][] board, char playerSymbol){
+    static boolean hasMoves(char[][] board, char playerSymbol){
         Point myPieces[] = findPieces(playerSymbol, board);
 
         //go through all the pieces, return true if we find at least one move

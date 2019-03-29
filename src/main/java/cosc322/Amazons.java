@@ -12,6 +12,11 @@ import ygraphs.ai.smart_fox.games.AmazonsGameMessage;
 import ygraphs.ai.smart_fox.games.GameClient;
 import ygraphs.ai.smart_fox.games.GamePlayer;
 
+class AmazonSettings{
+    final static int ROOM_NUM = 15;
+}
+
+
 
 class AmazonsAI extends Amazons{
     AmazonsBot mybot;
@@ -119,7 +124,7 @@ public class Amazons extends GamePlayer{
 	//once logged in, the gameClient will have  the names of available game rooms
 	ArrayList<String> rooms = gameClient.getRoomList();
 
-	this.gameClient.joinRoom(rooms.get(15));
+	this.gameClient.joinRoom(rooms.get(AmazonSettings.ROOM_NUM));
 
     }
 
