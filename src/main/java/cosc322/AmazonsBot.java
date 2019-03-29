@@ -68,17 +68,20 @@ public class AmazonsBot {
         
         int depth = 2;
 
+        /*
         if (children.size() + thereSize < 500) depth = 3;
         if (children.size() + thereSize < 130) depth = 4;
         if (children.size() + thereSize < 100) depth = 5;
         if (children.size() + thereSize < 60) depth = 6;
+        */
         
-        /*
         if (children.size() + thereSize < 400) depth = 3;
         if (children.size() + thereSize < 130) depth = 4;
         if (children.size() + thereSize < 60) depth = 5;
         if (children.size() + thereSize < 20) depth = 6;
-        */
+        
+        
+        //HeuristicFunction.useZones = false;
         
         int numThreads = 7;
         if(numThreads > 1){
