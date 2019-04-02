@@ -13,7 +13,7 @@ import ygraphs.ai.smart_fox.games.GameClient;
 import ygraphs.ai.smart_fox.games.GamePlayer;
 
 class AmazonSettings{
-    final static int ROOM_NUM = 16;
+    final static int ROOM_NUM = 1;
 }
 
 
@@ -242,7 +242,7 @@ public class Amazons extends GamePlayer{
 
         AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
 	//Amazons game02 = new Amazons("player-02", "02");
-        //AmazonsAI game02 = new AmazonsAI("LanaKane", "02");
+        //AmazonsAI game02 = new AmazonsAI("LanaKane", args[1]);
 
 	//Amazons game = new Amazons(args[0], args[1]);
     }

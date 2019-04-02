@@ -65,6 +65,7 @@ public class AmazonsBot {
 
         int thereSize = 0;
         if(children.size() > 0){
+            bestMove = children.get(0).move;
             thereSize = expandNode(children.get(0), player.badQueenSymb).size();
             System.out.println("thereChildren: " + thereSize);
             System.out.println("\n" + "Total size: " + (children.size() + thereSize));
@@ -79,7 +80,7 @@ public class AmazonsBot {
         if (children.size() + thereSize < 60) depth = 6;
         */
 
-        if (children.size() + thereSize < 485) depth = 3;
+        if (children.size() + thereSize < 400) depth = 3;
         if (children.size() + thereSize < 120) depth = 4;
         if (children.size() + thereSize < 60) depth = 5;
         if (children.size() + thereSize < 40) depth = 6;
