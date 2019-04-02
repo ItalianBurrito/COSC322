@@ -80,11 +80,11 @@ public class AmazonsBot {
         */
 
 
-        if (children.size() + thereSize < 900) depth = 3;
-        if (children.size() + thereSize < 290) depth = 4;
-        if (children.size() + thereSize < 78) depth = 5;
-        if (children.size() + thereSize < 50) depth = 6;
-        if (children.size() + thereSize < 35) depth = 7;
+        if (children.size() + thereSize < 1100) depth = 3;
+        if (children.size() + thereSize < 280) depth = 4;
+        if (children.size() + thereSize < 100) depth = 5;
+        if (children.size() + thereSize < 55) depth = 6;
+        if (children.size() + thereSize < 35) depth = 8;
 
 
         System.out.println("Depth: " + depth);
@@ -140,6 +140,7 @@ public class AmazonsBot {
 
         for(Node child : children){
             if(child.score > bestScore){
+                if(child.score == Integer.MAX_VALUE) continue;
                 bestScore = child.score;
                 bestMove = child.move;
             }
@@ -235,6 +236,7 @@ public class AmazonsBot {
                     stack.add(child);
                 }
             }
+            if(((System.nanoTime() - star)/1000000000) > 18) break;
         }//end of handling node
     }
 

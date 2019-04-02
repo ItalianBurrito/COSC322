@@ -20,10 +20,11 @@ class AmazonSettings{
 
 class AmazonsAI extends Amazons{
     AmazonsBot mybot;
+    long longestTime = 0;
 
     public AmazonsAI(String name, String passwd) {
         super(name, passwd);
-
+        
         mybot = new AmazonsBot(this);
     }
 
@@ -34,10 +35,14 @@ class AmazonsAI extends Amazons{
         long startTime = System.nanoTime();
         Move move = mybot.findMoveTree(startTime);
         long elapsed = (System.nanoTime() - startTime)/1000000000;
-
+        
+        if(longestTime < elapsed){
+            longestTime = elapsed;
+        }
+        
          System.out.println("Done Turn!");
         System.out.println("Elapsed:" + elapsed + " sec");
-
+        System.out.println("Longest turn time: " + longestTime);
 
 
         boolean validMove = board.positionMarked(move.qDest.y, move.qDest.x, move.arrow.y, move.arrow.x, move.qSrc.y, move.qSrc.x, false);
@@ -159,7 +164,7 @@ public class Amazons extends GamePlayer{
                 System.out.println(this.userName() + " is the black player");
                 performMove();
             }
-            guiFrame.setTitle("Game of the Amazons (COSC 322, ) " + msgDetails.get("player-white") + "(White Player)  VS  " + msgDetails.get("player-black") + "(Black Player)");
+            guiFrame.setTitle(msgDetails.get("player-white") + "(White Player)  VS  " + msgDetails.get("player-black") + "(Black Player)");
 	}
 
 	else if(messageType.equals(GameMessage.GAME_ACTION_MOVE)){
@@ -240,11 +245,11 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) {
 
-        AmazonsAI game01 = new AmazonsAI("Blarg", args[1]);
+        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
         //AmazonsAI game02 = new AmazonsAI("larg", args[1]);
         //AmazonsAI game02 = new AmazonsAI("larg", args[1]);
 	//Amazons game02 = new Amazons("player-02", "02");
-        //AmazonsAI game02 = new AmazonsAI("LanaKane", args[1]);
+        AmazonsAI game02 = new AmazonsAI("LanaKane", args[1]);
 
 	//Amazons game = new Amazons(args[0], args[1]);
     }

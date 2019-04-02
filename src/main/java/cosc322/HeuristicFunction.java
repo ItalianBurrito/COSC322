@@ -33,8 +33,8 @@ public class HeuristicFunction {
             if(score == 0) score = scoreBoard(board, player);
         }
 
-        score = findZoneSize(board, player);
-        if(score == 0) score = scoreBoard(board, player);
+       // score = findZoneSize(board, player);
+        //if(score == 0) score = scoreBoard(board, player);
         /*
         if(!useZones)
             score = scoreBoard(board, player);
