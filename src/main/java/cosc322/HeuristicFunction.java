@@ -20,6 +20,18 @@ public class HeuristicFunction {
     public static int calcHeuristic(char[][] board, Amazons player){
 
         int score = 0;
+        
+
+        if(!hasMoves(board, player.myQueenSymb)){
+            score = Integer.MIN_VALUE + 1;
+        }
+        else if(!hasMoves(board, player.badQueenSymb)){
+            score = Integer.MAX_VALUE - 1;
+        }
+        else{
+            score = findZoneSize(board, player);
+            if(score == 0) score = scoreBoard(board, player);
+        }
 
         score = findZoneSize(board, player);
         if(score == 0) score = scoreBoard(board, player);
@@ -29,15 +41,6 @@ public class HeuristicFunction {
         else
             score = findZoneSize(board, player);
           */
-
-        /*
-        if(!hasMoves(board, player.myQueenSymb)){
-            score = Integer.MIN_VALUE + 1;
-        }
-        else if(!hasMoves(board, player.myQueenSymb)){
-            score = Integer.MAX_VALUE - 1;
-        }
-        */
 
         return score;
     }

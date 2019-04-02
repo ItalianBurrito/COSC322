@@ -13,7 +13,7 @@ import ygraphs.ai.smart_fox.games.GameClient;
 import ygraphs.ai.smart_fox.games.GamePlayer;
 
 class AmazonSettings{
-    final static int ROOM_NUM = 1;
+    final static int ROOM_NUM = 13;
 }
 
 
@@ -35,12 +35,8 @@ class AmazonsAI extends Amazons{
         Move move = mybot.findMoveTree(startTime);
         long elapsed = (System.nanoTime() - startTime)/1000000000;
 
-        if(elapsed < 25){
-
-        }
-
-         System.out.println("done turn!");
-        System.out.println("Elapsed:" + elapsed + " sec\n");
+         System.out.println("Done Turn!");
+        System.out.println("Elapsed:" + elapsed + " sec");
 
 
 
@@ -141,7 +137,7 @@ public class Amazons extends GamePlayer{
     public boolean handleGameMessage(String messageType, Map<String, Object> msgDetails){
 
        System.out.println("-- Server Message for " + this.userName() + " --");
-       System.out.println(messageType);
+       System.out.println(messageType+"\n");
 //       Iterator iterator = msgDetails.entrySet().iterator();
 //       while (iterator.hasNext()){
 //           Map.Entry pair = (Map.Entry)iterator.next();
@@ -149,6 +145,8 @@ public class Amazons extends GamePlayer{
 //       }
 
 	if(messageType.equals(GameMessage.GAME_ACTION_START)){
+            String ourPlayer = "";
+            String theirPlayer = "";
 
             if(((String) msgDetails.get("player-white")).equals(this.userName())){
                 whitePlayer = true;
@@ -161,11 +159,13 @@ public class Amazons extends GamePlayer{
                 System.out.println(this.userName() + " is the black player");
                 performMove();
             }
+            guiFrame.setTitle("Game of the Amazons (COSC 322, ) " + msgDetails.get("player-white") + "(White Player)  VS  " + msgDetails.get("player-black") + "(Black Player)");
 	}
 
 	else if(messageType.equals(GameMessage.GAME_ACTION_MOVE)){
 	    handleOpponentMove(msgDetails);
 	}
+        System.out.println();
 	return true;
     }
 
@@ -240,7 +240,9 @@ public class Amazons extends GamePlayer{
 
     public static void main(String[] args) {
 
-        AmazonsAI game01 = new AmazonsAI("Xena", args[1]);
+        AmazonsAI game01 = new AmazonsAI("Blarg", args[1]);
+        //AmazonsAI game02 = new AmazonsAI("larg", args[1]);
+        //AmazonsAI game02 = new AmazonsAI("larg", args[1]);
 	//Amazons game02 = new Amazons("player-02", "02");
         //AmazonsAI game02 = new AmazonsAI("LanaKane", args[1]);
 
